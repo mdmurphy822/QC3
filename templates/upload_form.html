@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Quiz File</title>
+  <style>
+    #progress-container {
+      display: none;
+      margin-top: 20px;
+    }
+    .spinner {
+      border: 8px solid #f3f3f3;
+      border-top: 8px solid #3498db;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h2>Upload Quiz File for Parsing</h2>
+  <form id="upload-form" action="/upload/auto-correct" method="post" enctype="multipart/form-data">
+    <label for="file">Select .docx or .txt file:</label><br><br>
+    <input type="file" id="file" name="file" accept=".docx,.txt" required><br><br>
+    <input type="submit" value="Upload and Parse">
+  </form>
+
+  <div id="progress-container">
+    <p>Parsing in progress, please wait...</p>
+    <div class="spinner"></div>
+  </div>
+
+  {% if download_link %}
+  <div style="margin-top: 20px;">
+    <p><strong>✅ Parsing complete!</strong></p>
+    <a href="{{ download_link }}">Click here to download your output file</a>
+  </div>
+  {% endif %}
+
+  <script>
+    const form = document.getElementById("upload-form");
+    const progressContainer = document.getElementById("progress-container");
+
+    form.addEventListener("submit", function () {
+      progressContainer.style.display = "block";
+    });
+  </script>
+</body>
+</html>
