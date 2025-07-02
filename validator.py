@@ -1,7 +1,8 @@
-import openai
 import os
+from openai import OpenAI
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Create OpenAI client from environment variable
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def validate_output_with_gpt(output_text: str) -> str:
     validation_prompt = f"""
@@ -19,16 +20,19 @@ or
 ❌ INVALID FILE: <list issues>
 
 Here is the content to validate:
-""" + output_text
+{output_text}
+"""
 
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "You are an expert in Brightspace quiz formatting."},
             {"role": "user", "content": validation_prompt}
         ]
     )
-    return response['choices'][0]['message']['content']
+
+    return response.choices[0].message.content
+
 
 def attempt_fix_with_gpt(raw_text: str) -> str:
     repair_prompt = f"""
@@ -45,7 +49,7 @@ Raw quiz text:
 ---
 """
 
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "You convert raw quiz text to valid Brightspace tab-delimited format."},
@@ -53,4 +57,4 @@ Raw quiz text:
         ]
     )
 
-    return response['choices'][0]['message']['content']
+    return response.choices[0].message.content
